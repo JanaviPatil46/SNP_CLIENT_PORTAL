@@ -5,12 +5,39 @@ import { useNavigate, useParams } from "react-router-dom";
 import { CiMenuKebab } from "react-icons/ci";
 import { toast } from "react-toastify";
 import { LoginContext } from '../Contextprovider/Context';
-const ProposalsEls = () => {
 
+const ProposalsEls = () => {
     const [accountId, setAccountId] = useState('')
     const { logindata } = useContext(LoginContext);
+
+   
     const [ProposalsTemplates, setProposalsTemplates] = useState([]);
     const [proposaltempId,setProposalTempId]=useState()
+
+
+    const fetchAccountId = async () => {
+        const requestOptions = {
+            method: "GET",
+            redirect: "follow"
+        };
+
+        fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
+            .then((response) => response.json()
+
+            )
+            .then((result) => {
+                console.log(result)
+                setAccountId(result.accounts[0]._id)
+                console.log(result.accounts[0]._id)
+            })
+            .catch((error) => console.error(error));
+    };
+
+    console.log(accountId)
+    useEffect(() => {
+        fetchAccountId()
+    }, []);
+
    
     const navigate = useNavigate();
     const PROPOSALS_API = process.env.REACT_APP_PROPOSAL_URL
@@ -34,28 +61,17 @@ const ProposalsEls = () => {
     //     }
     // };
 
-    const fetchAccountId = async () => {
-        const requestOptions = {
-            method: "GET",
-            redirect: "follow"
-        };
+    // useEffect(() => {
+    //     fetchPrprosalsAllData();
+    // }, []);
 
-        fetch(`http://127.0.0.1:8880/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
-            .then((response) => response.json()
-
-            )
-            .then((result) => {
-                console.log(result)
-                setAccountId(result.accounts[0]._id)
-                console.log(result.accounts[0]._id)
-            })
-            .catch((error) => console.error(error));
+    const handleEdit = (_id, data) => {
+        console.log(_id)
+        console.log(data)
+        
+         navigate('/updateProposals/'+ _id)
+         console.log(_id);
     };
-
-    useEffect(() => {
-        fetchAccountId();
-    }, []);
-
     const fetchPrprosalsAllData = async (accountId) => {
         try {
             const url = `http://127.0.0.1:7400/proposalandels/proposalaccountwise/proposalbyaccount/${accountId}`;
@@ -74,18 +90,10 @@ const ProposalsEls = () => {
             console.error("Error fetching Proposals  templates:", error);
         }
     };
-    
+
     useEffect(() => {
         fetchPrprosalsAllData(accountId);
     }, [accountId]);
-
-    const handleEdit = (_id, data) => {
-        console.log(_id)
-        console.log(data)
-        
-         navigate('/updateProposals/'+ _id)
-         console.log(_id);
-    };
 
 
     return (
