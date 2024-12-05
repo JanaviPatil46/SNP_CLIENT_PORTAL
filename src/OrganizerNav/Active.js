@@ -388,14 +388,14 @@ const Active = () => {
   const { logindata } = useContext(LoginContext);
   console.log(logindata)
   const LOGIN_API = process.env.REACT_APP_USER_LOGIN;
-  const ORGANIZER_API = process.en.REACT_APP_ORGANIZER_TEMP_URL;
+  const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
   const fetchAccountId = async () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow"
     };
 
-    fetch(`${LOGIN_API}/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
+    fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
       .then((response) => response.json()
       )
       .then((result) => {

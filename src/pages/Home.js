@@ -83,7 +83,7 @@
 //       )
 //       .then((result) => {
 //         console.log(result)
-        
+
 //         setAccountId(result.accounts[0]._id)
 //         console.log(result.accounts[0]._id)
 
@@ -596,7 +596,7 @@ import TelegramIcon from '@mui/icons-material/Telegram';
 import Drawer from '@mui/material/Drawer';
 import CloseIcon from '@mui/icons-material/Close';
 import { useTheme, useMediaQuery } from '@mui/material';
-import Texteditor from '../pages/Texteditor';
+
 import HomeData from '../DummyData/HomeData';
 import Badge from '@mui/material/Badge';
 import EventNoteIcon from '@mui/icons-material/EventNote';
@@ -605,7 +605,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { useNavigate } from 'react-router-dom';
 import CreditCardIcon from '@mui/icons-material/CreditCard';
-
+import { toast } from "react-toastify"
+import Editor from '../pages/Texteditor';
 const Home = () => {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down('sm'));
@@ -658,49 +659,32 @@ const Home = () => {
   const [accountId, setAccountId] = useState('')
   const { logindata } = useContext(LoginContext);
   console.log(logindata)
-  // const fetchAccountId = async () => {
-  //   const requestOptions = {
-  //     method: "GET",
-  //     redirect: "follow"
-  //   };
 
-  //   fetch(`http://127.0.0.1:8880/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
-  //     .then((response) => response.json()
-  //     )
-  //     .then((result) => {
-  //       console.log(result)
-        
-  //       setAccountId(result.accounts[0]._id)
-  //       console.log(result.accounts[0]._id)
 
-  //     })
-  //     .catch((error) => console.error(error));
-  // };
-  
-  
+
   const fetchAccountId = async () => {
     if (!logindata || !logindata.user) {
       console.error("logindata or logindata.user is undefined");
-      return; // Exit the function if logindata or logindata.user is undefined
+      return; 
     }
-  
+
     const requestOptions = {
       method: "GET",
       redirect: "follow"
     };
-  
+
     try {
-      const response = await fetch(`${LOGIN_API}/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions);
+      const response = await fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions);
       const result = await response.json();
       console.log(result);
-  
+
       setAccountId(result.accounts[0]._id);
       console.log(result.accounts[0]._id);
     } catch (error) {
       console.error("Error fetching account details:", error);
     }
   };
- // console.log(accountId)
+
 
   useEffect(() => {
     if (logindata && logindata.user) {
@@ -728,7 +712,7 @@ const Home = () => {
   };
 
   useEffect(() => {
-   
+
     fetchOrganizerTemplates(accountId);
     fetchidwiseData(accountId);
   }, [accountId]);
@@ -753,25 +737,25 @@ const Home = () => {
 
   //for billing
   const [BillingInvoice, setBillingInvoice] = useState([]);
-const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
+  const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
   const fetchidwiseData = async (accountId) => {
     try {
-      const url = `${CLIENT_INVOICE_API}/workflow/invoices/invoice/invoicelist/getInvoiceListByAccountId/${accountId}`;
+      const url = `${CLIENT_INVOICE_API}/workflow/invoices/invoice/invoicelistby/accountid/${accountId}`;
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch task templates");
       }
       const data = await response.json();
-      console.log(data)
-      setBillingInvoice(data.invoices);
 
+      // Correct key to access invoices
+      console.log(data);
+      setBillingInvoice(data.invoice);
 
-      // console.log(data.invoices[0]._id)
+      console.log(data.invoice[0]._id); // Accessing the first invoice's ID
     } catch (error) {
       console.error("Error fetching task templates:", error);
     }
   };
-
 
 
   const [selectedInvoice, SetSelectedInvoice] = useState();
@@ -784,9 +768,105 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
 
   console.log(selectedInvoice)
 
-  // useEffect(() => {
-  //     fetchidwiseData(accountId);
-  // }, [accountId]);
+
+  // for chat 
+  const CLEINT_CHAT_API = process.env.REACT_APP_CHAT_API
+  //for texteditor.
+  const [description, setDescription] = useState('');
+  const handleEditorChange = (content) => {
+    setDescription(content);
+  };
+  const [inputTextError, setInputTextError] = useState('');
+
+  const handlechatsubject = (e) => {
+    const { value } = e.target;
+    setInputText(value);
+  };
+  const [inputText, setInputText] = useState('');
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [accountName, setAccountName] = useState()
+  const [time, setTime] = useState()
+  const [chatList, setChatList] = useState([]);
+  const [isActiveTrue, setIsActiveTrue] = useState(true);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const accountwiseChatlist = (accId, ActiveTrue) => {
+    console.log(accId)
+    const requestOptions = {
+      method: "GET",
+      redirect: "follow",
+    };
+    const url = `${CLEINT_CHAT_API}/chats/chatsaccountwise/isactivechat/${accId}/${ActiveTrue}`
+
+    fetch(url, requestOptions)
+      .then((response) => response.json())
+      .then((result) => {
+        console.log(result);
+
+        if (result.chataccountwise && result.chataccountwise.length > 0) {
+
+          result.chataccountwise.forEach((chat) => {
+            console.log(chat.chatsubject);
+            console.log(chat.description);
+
+            chat.description.forEach((message) => {
+              console.log(message._id);
+            });
+            setAccountName(chat.accountid.accountName);
+            setTime(chat.updatedAt)
+
+          });
+          setIsSubmitted(true)
+          setChatList(result.chataccountwise);
+        } else {
+          console.log("No chat data available");
+        }
+      })
+      .catch((error) => console.error(error));
+  };
+  const saveChat = () => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+    const messageData = [{
+      message: description,
+      fromwhome: "Client",
+    }];
+    console.log(messageData)
+    const raw = JSON.stringify({
+      accountids: [accountId],
+      chatsubject: inputText,
+      description: messageData,
+      active: "true"
+    });
+    const requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow"
+    };
+    console.log(raw)
+    fetch(`${CLEINT_CHAT_API}/chats/chatsaccountwise`, requestOptions)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then((result) => {
+        console.log(result);
+        toast.success("New Chat created successfully");
+
+        setIsSubmitted(true);
+        accountwiseChatlist(accountId, isActiveTrue);
+        handleClose()
+
+      })
+      .catch((error) => {
+        console.error("Fetch error: ", error.message);
+        toast.error("Failed to create new chat. Please try again.");
+      });
+  };
 
   return (
     <Box sx={{ flexGrow: 1 }} >
@@ -810,7 +890,7 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
                     sx={{
                       position: 'relative',
                       '&:hover .signText': {
-                        opacity: 1, // Make the "Sign" text visible on hover
+                        opacity: 1, 
                       },
                     }}
                   >
@@ -850,7 +930,7 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
                 ))}
               </Box>
             </Box>
-            
+
             {/* organizer */}
             <Box m={2}>
               <Box mt={2} fontWeight="bold" display="flex" justifyContent="space-between">
@@ -962,7 +1042,7 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
                       },
                     }}
                   >
-                    <Box  onClick={() => handleEditInvoice(invoice._id)}
+                    <Box onClick={() => handleEditInvoice(invoice._id)}
                       sx={{
                         display: 'flex',
                         alignItems: 'center',
@@ -970,7 +1050,7 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
                         border: '1px solid #ccc',
                         borderRadius: '4px',
                         mb: 2,
-                        cursor:'pointer'
+                        cursor: 'pointer'
                       }}
                     >
                       <Box sx={{ color: 'rgb(50, 205, 50)', }}>
@@ -1030,53 +1110,62 @@ const CLIENT_INVOICE_API = process.env.REACT_APP_INVOICES_URL
 
               <Box sx={{ color: '#135ea9', display: 'flex', alignItems: 'center', gap: '5px', mb: 2, cursor: 'pointer', m: 2 }}>
                 <TelegramIcon sx={{ fontSize: '20px' }} />
-                <Typography sx={{ fontWeight: 600 }} onClick={() => setNewChat(true)} variant='h7'>Chat</Typography>
+                <Typography sx={{ fontWeight: 600 }} onClick={handleOpen} variant='h7'>Chat</Typography>
               </Box>
             </Box>
 
             <Box >
               <Drawer
                 anchor="right"
-                open={isNewChatOpen}
-                onClose={handleNewDrawerClose}
+                open={open}
+                onClose={handleClose}
                 PaperProps={{
                   sx: {
-                    borderRadius: isSmallScreen ? '0' : '10px 0 0 10px',
-                    width: isSmallScreen ? '100%' : '600px',
-                    maxWidth: '95%',
+                    width: "40%",
                   },
                 }}
               >
-                <Box m={2} >
-                  <Box>
-                    <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '20px' }}>
-                      <Typography>NEW Chat</Typography>
-                      <CloseIcon onClick={handleNewDrawerClose} style={{ cursor: 'pointer' }} />
+                <Box sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+                  {/* Drawer Header */}
+                  <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: 2 }}>
+                    <Typography variant="h6">New chat</Typography>
+                    <Box onClick={handleClose} sx={{ cursor: 'pointer', color: '#1976d3' }}>
+                      <CloseIcon />
                     </Box>
-                    <Divider />
+                  </Box>
+                  <Divider />
+
+                  <Box m={1}>
+                    <InputLabel sx={{ color: 'black' }}>Subject</InputLabel>
+                    <TextField
+                      sx={{ mt: 2 }}
+                      fullWidth
+                      name="subject"
+                      value={inputText} onChange={handlechatsubject}
+                      placeholder="Subject"
+                      size="small"
+                      error={!!inputTextError}
+                    />
                   </Box>
 
-                  <Box
-                    component="form"
-                    sx={{
-                      '& > :not(style)': { m: 1, width: '64ch' },
-                    }}
-                    noValidate
-                    autoComplete="off"
-                  >
-                    <InputLabel sx={{ color: 'black', }}>Subject</InputLabel>
-                    <TextField id="outlined-basic" label="Subject" variant="outlined" />
+
+                  <Box sx={{ m: 1 }}>
+                    <Editor onChange={handleEditorChange} />
                   </Box>
 
-                  <Box sx={{ mt: 3, m: 1 }}>
-                    <Texteditor initialContent={content} onChange={handleContentChange} />
+                  {/* Drawer Actions */}
+                  <Box sx={{ p: 4, display: "flex", alignItems: "center", gap: 2, m: 2, }}>
+                    <Button
+                      variant="contained" color="primary"
+                      // onClick={sendSaveChatMail}
+                      onClick={saveChat}
+                    >
+                      Create chat
+                    </Button>
+                    <Button onClick={handleClose} variant="outlined">
+                      Cancel
+                    </Button>
                   </Box>
-
-                  <Box sx={{ pt: 2, display: 'flex', alignItems: 'center', gap: 5, margin: "8px", ml: 3 }}>
-                    <Button variant="contained" color="primary">Create</Button>
-                    <Button variant="outlined" onClick={handleNewDrawerClose}>Cancel</Button>
-                  </Box>
-
                 </Box>
               </Drawer>
             </Box>

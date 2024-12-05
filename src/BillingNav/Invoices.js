@@ -21,7 +21,7 @@ const Invoices = () => {
       redirect: "follow"
     };
    
-    fetch(`http://127.0.0.1:8880/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
+    fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
       .then((response) => response.json()
      
     )
@@ -46,25 +46,42 @@ const Invoices = () => {
   const[InvoiceTempId,setInvoiceTempId]=useState( );
 
   
-  
+  const INVOICE_API = process.env.REACT_APP_INVOICES_URL
+  // const fetchidwiseData = async (accountId) => {
+  //   try {
+  //     const url = `http://127.0.0.1:7650/workflow/invoices/invoice/invoicelistby/accountid/${accountId}`;
+  //     const response = await fetch(url);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch task templates");
+  //     }
+  //     const data = await response.json();
+  //     console.log(data)
+  //     setBillingInvoice(data.invoices);
+  //      console.log(data.invoices[0].summary.total)
+  //      setInvoiceTempId(data.invoices[0]._id)  
+  //      console.log(data.invoices[0]._id)
+  //   } catch (error) {
+  //     console.error("Error fetching task templates:", error);
+  //   }
+  // };
   const fetchidwiseData = async (accountId) => {
     try {
-      const url = `http://127.0.0.1:7650/workflow/invoices/invoice/invoicelist/getInvoiceListByAccountId/${accountId}`;
-      const response = await fetch(url);
-      if (!response.ok) {
-        throw new Error("Failed to fetch task templates");
-      }
-      const data = await response.json();
-      console.log(data)
-      setBillingInvoice(data.invoices);
-       console.log(data.invoices[0].summary.total)
-       setInvoiceTempId(data.invoices[0]._id)  
-       console.log(data.invoices[0]._id)
-    } catch (error) {
-      console.error("Error fetching task templates:", error);
-    }
-  };
+        const url = `${INVOICE_API}/workflow/invoices/invoice/invoicelistby/accountid/${accountId}`;
+        const response = await fetch(url);
+        if (!response.ok) {
+            throw new Error("Failed to fetch task templates");
+        }
+        const data = await response.json();
 
+        // Correct key to access invoices
+        console.log(data);
+        setBillingInvoice(data.invoice);
+
+        console.log(data.invoice[0]._id); // Accessing the first invoice's ID
+    } catch (error) {
+        console.error("Error fetching task templates:", error);
+    }
+};
   const navigate = useNavigate();
   
   const [selectedInvoice, SetSelectedInvoice] = useState({});

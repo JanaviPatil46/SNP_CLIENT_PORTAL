@@ -44,7 +44,7 @@ const Organizers = () => {
             redirect: "follow"
         };
 
-        fetch(`${LOGIN_API}/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
+        fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
             .then((response) => response.json()
             )
             .then((result) => {

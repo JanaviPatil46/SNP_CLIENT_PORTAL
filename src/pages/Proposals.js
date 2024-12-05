@@ -42,28 +42,7 @@ const ProposalsEls = () => {
     const navigate = useNavigate();
     const PROPOSALS_API = process.env.REACT_APP_PROPOSAL_URL
 
-    // const fetchPrprosalsAllData = async () => {
-    //     try {
-    //         const url = `${PROPOSALS_API}/proposalandels/proposalaccountwise/allproposallist/list`;
-
-    //         const response = await fetch(url);
-    //         if (!response.ok) {
-    //             throw new Error("Failed to fetch Proposals templates");
-    //         }
-    //         const result = await response.json();
-    //         console.log(result.proposalesandelsAccountwise)
-    //         setProposalsTemplates(result.proposalesandelsAccountwise);
-    //         setProposalTempId(result._id)
-    //         console.log(result._id)
-
-    //     } catch (error) {
-    //         console.error("Error fetching Proposals  templates:", error);
-    //     }
-    // };
-
-    // useEffect(() => {
-    //     fetchPrprosalsAllData();
-    // }, []);
+   
 
     const handleEdit = (_id, data) => {
         console.log(_id)
@@ -74,7 +53,7 @@ const ProposalsEls = () => {
     };
     const fetchPrprosalsAllData = async (accountId) => {
         try {
-            const url = `http://127.0.0.1:7400/proposalandels/proposalaccountwise/proposalbyaccount/${accountId}`;
+            const url = `${PROPOSALS_API}/proposalandels/proposalaccountwise/proposalbyaccount/${accountId}`;
 
             const response = await fetch(url);
             if (!response.ok) {
