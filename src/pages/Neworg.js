@@ -30,7 +30,7 @@ const NewOrganizer = () => {
         label: pipelineData.organizerName
 
     }));
-    
+
     return (
         <div>
             <Box mt={2}>
@@ -65,7 +65,7 @@ const NewOrganizer = () => {
                 />
             </Box>
 
-          
+
         </div>
     )
 }

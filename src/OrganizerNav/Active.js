@@ -1,372 +1,3 @@
-// import * as React from 'react';
-// import { DataGrid } from '@mui/x-data-grid';
-// import Paper from '@mui/material/Paper';
-// import Chip from '@mui/material/Chip';
-
-// const columns = [
-//   {
-//     field: 'name',
-//     headerName: 'Name',
-//     flex: 2,
-//     renderCell: (params) => (
-//       <span style={{ whiteSpace: 'normal', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1976d3' }}>
-//         {params.value}
-//       </span>
-//     ),
-//   },
-//   {
-//     field: 'lastUpdate',
-//     headerName: 'Last Update',
-//     flex: 1,
-//   },
-//   {
-//     field: 'status',
-//     headerName: 'Status',
-//     flex: 1,
-//     renderCell: (params) => (
-//       <Chip
-//         sx={{
-//           backgroundColor: '#697991',
-//           color: '#fff',
-//         }}
-//         label={params.value}
-//         color={params.value === 'partially signed' ? 'warning' : 'default'}
-//       />
-//     ),
-//   },
-//   {
-//     field: 'seal',
-//     headerName: 'Seal',
-//     flex: 1,
-//   },
-// ];
-
-// const rows = [
-//   {
-//     id: 1,
-//     name: '2023 Individual Tax Organizer',
-//     lastUpdate: '02:44 PM',
-//     status: 'Pending',
-//     seal: '',
-//   },
-// ];
-
-// export default function DataTable() {
-//   return (
-//     <Paper sx={{ height: 400, width: '100%' }}>
-//       <DataGrid
-//         rows={rows}
-//         columns={columns}
-//         pageSize={5}
-//         rowsPerPageOptions={[5, 10]}
-//         sx={{ border: 0 }}
-//       />
-//     </Paper>
-//   );
-// }
-
-
-
-
-// import React, { useState, useEffect } from 'react'
-// import { useNavigate, useParams } from 'react-router-dom';
-// import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
-// // import ReactPaginate from 'react-paginate';
-// // import { toast } from 'react-toastify';
-
-// const Organizers = () => {
-//   // const navigate = useNavigate();
-//   // const API_KEY = process.env.REACT_APP_API_IP;
-//   // const { data } = useParams('66ac9508c1fd3a0ef310a554');
-//   // console.log(data)
-
-//   // const handleAddNewOrganizer = () => {
-//   //   navigate(`/createOrganizer/${data}`);
-//   // };
-
-
-
-//   //get all templateName Record 
-//   const [organizerAccountwise, setOrganizerAccountwise] = useState([]);
-//   useEffect(() => {
-//     fetchOrganizerTemplates();
-//   }, []);
-
-//   const fetchOrganizerTemplates = async () => {
-//     try {
-//       const requestOptions = {
-//         method: "GET",
-//         redirect: "follow"
-//       };
-//       const url = 'http://127.0.0.1:7600/organizer-account-wise/account/66ac94e8c1fd3a0ef310a552';
-//       fetch(url, requestOptions)
-//         .then((response) => response.json())
-//         .then((result) => {
-//           console.log('Full result:', result); // Log the full result object
-//           setOrganizerAccountwise(result.organizerAccountWise);
-//           console.log('Organizer Accountwise:', result.organizerAccountWise); // Log the state update
-//         })
-//         .catch((error) => console.error('Fetch error:', error));
-//     } catch (error) {
-//       console.error('Error fetching Organizer Templates:', error);
-//     }
-//   };
-// console.log(organizerAccountwise);
-
-
-// const itemsPerPage = 10;
-// const [currentPage, setCurrentPage] = useState(1);
-// const totalPages = Math.ceil((organizerAccountwise?.length || 0) / itemsPerPage); // Add fallback for undefined
-// const startIndex = (currentPage - 1) * itemsPerPage;
-// const endIndex = Math.min(startIndex + itemsPerPage, organizerAccountwise?.length || 0);
-// const currentTemplates = organizerAccountwise?.slice(startIndex, endIndex) || []; 
-
-//   console.log(currentTemplates)
-
-//   const handlePageChange = ({ selected }) => {
-//     setCurrentPage(selected);
-//   };
-
-//   const [openMenuId, setOpenMenuId] = useState(null);
-//   const toggleMenu = (_id) => {
-//     setOpenMenuId(openMenuId === _id ? null : _id);
-//   };
-
-//   // const handleEdit = (_id) => {
-//   //     // navigate('invoicestempupdate/' + _id)
-//   //     navigate('/CreateOrganizerUpdate/' + _id)
-//   // };
-
-
-//   //delete template
-//   const handleDelete = (_id) => {
-//     const requestOptions = {
-//       method: "DELETE",
-//       redirect: "follow"
-//     };
-//     const url = 'http://127.0.0.1:7600/organizer-account-wise/';
-//     fetch(url + _id, requestOptions)
-//       .then((response) => {
-//         if (!response.ok) {
-//           throw new Error('Failed to delete item');
-//         }
-//         return response.text();
-//       })
-//       .then((result) => {
-//         console.log(result);
-//         // toast.success('account organizer deleted successfully');
-//         fetchOrganizerTemplates();
-//         // setTimeout(() => {
-//         //   navigate('/organizers')
-//         // }, 1000);
-//       })
-//       .catch((error) => {
-//         console.error(error);
-//         // toast.error('Failed to delete item');
-//       })
-//       // .finally(() => {
-//       //   setTimeout(() => {
-//       //     window.location.reload();
-//       //   }, 1000);
-//       // });
-//   };
-
-//   return (
-//     <>
-//       <h4>Organizers</h4>
-
-
-//       <div >
-
-//         <div>
-//           <table style={{width:'100%'}}>
-//             <thead>
-//               <tr>
-//                 <th>Name</th>
-//                 <th>Last Updated</th>
-//                 <th>Status</th>
-//                 <th>Progress</th>
-//                 <th>Seal</th>
-//                 <th></th>
-//               </tr>
-//             </thead>
-//             <tbody>
-//               {currentTemplates.map(template => (
-//                 <tr key={template._id}>
-//                   <td
-//                   //  onClick={() => handleEdit(template._id)}
-//                    style={{ cursor: "pointer", color: 'var( --text-color)' }}>
-//                     {template.organizertemplateid ? template.organizertemplateid.organizerName : 'Unknown Organizer'}
-//                   </td>
-//                   <td></td>
-//                   <td></td>
-//                   <td></td>
-//                   <td></td>
-//                   <td>
-//                     <div className="ci-menu-kebab" onClick={() => toggleMenu(template._id)} style={{ cursor: 'pointer', fontSize: '20px' }}>
-//                       &#8942;
-//                     </div>
-//                     {openMenuId === template._id && (
-//                       <div>
-//                         <div
-//                         //  onClick={() => handleEdit(template._id)}
-//                          style={{ color: 'blue', cursor: 'pointer' }}>Edit</div>
-//                         <div onClick={(txt) => handleDelete(template._id)} style={{ color: 'red', cursor: 'pointer' }}>Delete</div>
-//                       </div>
-//                     )}
-//                   </td>
-//                 </tr>
-//               ))}
-//             </tbody>
-//           </table>
-//           {/* <div>
-//             <ReactPaginate
-//               pageCount={totalPages}
-//               pageRangeDisplayed={5} // Adjust this value as needed
-//               marginPagesDisplayed={2} // Adjust this value as needed
-//               onPageChange={handlePageChange}
-//               containerClassName={'pagination'}
-//               activeClassName={'active'}
-//               previousLabel={<MdKeyboardDoubleArrowLeft style={{ cursor: 'pointer' }} />}
-//               nextLabel={<MdKeyboardDoubleArrowRight style={{ cursor: 'pointer' }} />}
-//             />
-//           </div> */}
-//         </div>
-
-//       </div>
-
-//     </>
-//   )
-// }
-
-// export default Organizers
-
-// import * as React from 'react';
-// import { DataGrid } from '@mui/x-data-grid';
-// import Paper from '@mui/material/Paper';
-// import Chip from '@mui/material/Chip';
-// import { useState, useEffect } from 'react';
-
-// const columns = [
-//   {
-//     field: 'name',
-//     headerName: 'Name',
-//     flex: 2,
-//     renderCell: (params) => (
-//       <span style={{ whiteSpace: 'normal', overflow: 'hidden', textOverflow: 'ellipsis', color: '#1976d3' }}>
-//         {params.value}
-//       </span>
-//     ),
-//   },
-//   {
-//     field: 'lastUpdate',
-//     headerName: 'Last Update',
-//     flex: 1,
-//   },
-//   {
-//     field: 'status',
-//     headerName: 'Status',
-//     flex: 1,
-//     renderCell: (params) => (
-//       <Chip
-//         sx={{
-//           backgroundColor: '#697991',
-//           color: '#fff',
-//         }}
-//         label={params.value}
-//         color={params.value === 'partially signed' ? 'warning' : 'default'}
-//       />
-//     ),
-//   },
-//   {
-//     field: 'seal',
-//     headerName: 'Seal',
-//     flex: 1,
-//   },
-// ];
-
-// export default function DataTable() {
-
-//   const [accountid,setAccountId]=useState()
-
-//   // const fetchOrganizerTempByAccount =async()=>{
-//   //   const requestOptions = {
-//   //     method: "GET",
-//   //     redirect: "follow"
-//   //   };
-
-//   //   fetch(`http://127.0.0.1:7600/organizer-account-wise/account/${accountid}`, requestOptions)
-//   //     .then((response) => response.json())
-//   //     .then((result) => {
-//   //     const accountData = result.organizerAccountWise;
-//   //     console.log(accountData.accountid); 
-//   //     setAccountId(accountData.accountid)
-//   //     })
-//   //     .catch((error) => console.error(error));
-//   // }
-//   const fetchOrganizerTempByAccount = async () => {
-//     const requestOptions = {
-//       method: "GET",
-//       redirect: "follow"
-//     };
-
-//     fetch('http://127.0.0.1:7600/organizer-account-wise/account/66ac94cac1fd3a0ef310a550', requestOptions)
-//       .then((response) => response.json())
-//       .then((result) => {
-//         const accountData = result.organizerAccountWise;
-//         accountData.forEach((account) => {
-//            console.log(account.accountid); 
-//            console.log(accountData)
-
-
-//         });
-//       })
-//       .catch((error) => console.error(error));
-//   };
-//   console.log(accountid)
-
-//   useEffect(() => {
-//     fetchOrganizerTempByAccount();
-// }, []);
-
-
-
-// const [pipelineData, setPipelineData] = useState([]);
-// const [selectedPipeline, setselectedPipeline] = useState();
-
-// const handlePipelineChange = (selectedOptions) => {
-//     setselectedPipeline(selectedOptions);
-//     console.log(selectedOptions)
-// }
-// useEffect(() => {
-//     fetchPipelineData();
-// }, []);
-// const fetchPipelineData = async () => {
-//     try {
-//         const url = "http://127.0.0.1:7600/workflow/organizers/organizertemplate/";
-//         const response = await fetch(url);
-//         const data = await response.json();
-//         console.log(data)
-//         // setPipelineData(data.pipeline);
-//     } catch (error) {
-//         console.error("Error fetching data:", error);
-//     }
-// };
-//   return (
-//     <Paper sx={{ height: 400, width: '100%' }}>
-//       <DataGrid
-//         // rows={rows}
-//         columns={columns}
-//         pageSize={5}
-//         rowsPerPageOptions={[5, 10]}
-//         sx={{ border: 0 }}
-//       />
-
-
-//     </Paper>
-//   );
-// }
-
 
 
 import React, { useContext } from 'react';
@@ -381,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import UpdateOrganizer from '../pages/UpdateOrganizer';
 import { toast, ToastContainer } from 'react-toastify';
 import PrintIcon from '@mui/icons-material/Print';
+import { useNavigate  } from 'react-router-dom';
 
 
 const Active = () => {
@@ -415,6 +47,7 @@ const Active = () => {
 
 
 
+   const [status,setStatus]= useState()
 
   const [organizerTemplatesData, setOrganizerTemplatesData] = useState([]);
   
@@ -443,10 +76,19 @@ const Active = () => {
   ///
   const [selectedOrganizer, SetSelectedOrganizer] = useState({});
   const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
+
+
+
+  const navigate = useNavigate();
+
+
   const handleEdit = (_id) => {
+
     SetSelectedOrganizer(_id);
     console.log(_id)
-    setPreviewDialogOpen(true);
+  //  setPreviewDialogOpen(true);
+  navigate(`/organizers/update/${_id}`);
+    
   };
   console.log(selectedOrganizer)
   const handleClosePreview = () => {
@@ -601,50 +243,7 @@ const printOrganizerData = (id) => {
 
 
 
-      {/* table
-       */}
-      {/* 
-      <Paper>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Name</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Last Updated</strong>
-              </TableCell>
-              
-             
-              <TableCell>
-                <strong>Seal</strong>
-              </TableCell>
-              <TableCell>
-                <strong></strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {organizerTemplatesData.map((row) => (
-              <TableRow key={row._id}>
-                <TableCell>
-                  <Typography sx={{ color: "#2c59fa", cursor: "pointer", fontWeight: "bold" }} onClick={() => handleEdit(row._id)}>
-                    {row.organizertemplateid.organizerName}
-                  </Typography>
-                </TableCell>
-              
-                <TableCell>
-                  {new Date(row.updatedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
-                </TableCell>
-               
-                
-                <TableCell>{row.issealed ? <Chip label="Sealed" color="primary" /> : null}</TableCell>
-
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </Paper> */}
+      
 
       <Paper>
         <Table sx={{ minWidth: 650,height:'40vh ',overflowY:'auto'}} aria-label="simple table">

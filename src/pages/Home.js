@@ -665,7 +665,7 @@ const Home = () => {
   const fetchAccountId = async () => {
     if (!logindata || !logindata.user) {
       console.error("logindata or logindata.user is undefined");
-      return; 
+      return;
     }
 
     const requestOptions = {
@@ -699,6 +699,7 @@ const Home = () => {
       const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
 
       const response = await fetch(url);
+      
       if (!response.ok) {
         throw new Error("Failed to fetch organizerTemplatesData");
       }
@@ -712,7 +713,6 @@ const Home = () => {
   };
 
   useEffect(() => {
-
     fetchOrganizerTemplates(accountId);
     fetchidwiseData(accountId);
   }, [accountId]);
@@ -731,9 +731,11 @@ const Home = () => {
     setPreviewDialogOpen(false);
   };
 
-  const handleOragnizer = (organizerId) => {
+  const handleOragnizer = () => {
     navigate('/organizers');
   };
+
+
 
   //for billing
   const [BillingInvoice, setBillingInvoice] = useState([]);
@@ -741,6 +743,7 @@ const Home = () => {
   const fetchidwiseData = async (accountId) => {
     try {
       const url = `${CLIENT_INVOICE_API}/workflow/invoices/invoice/invoicelistby/accountid/${accountId}`;
+      console.log(url)
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch task templates");
@@ -758,7 +761,7 @@ const Home = () => {
   };
 
 
-  const [selectedInvoice, SetSelectedInvoice] = useState();
+  
 
   const handleEditInvoice = (invoiceId) => {
     console.log(invoiceId)
@@ -766,8 +769,11 @@ const Home = () => {
     navigate(`/bill/${invoiceId}`);
   };
 
-  console.log(selectedInvoice)
+  
 
+  const handleBilling = () => {
+    navigate('/billing/invoices');
+  };
 
   // for chat 
   const CLEINT_CHAT_API = process.env.REACT_APP_CHAT_API
@@ -890,7 +896,7 @@ const Home = () => {
                     sx={{
                       position: 'relative',
                       '&:hover .signText': {
-                        opacity: 1, 
+                        opacity: 1,
                       },
                     }}
                   >
@@ -1025,7 +1031,7 @@ const Home = () => {
 
 
             {/* Billing */}
-            <Box m={2}>
+            {/* <Box m={2}>
               <Box mt={2} fontWeight="bold" display="flex" justifyContent="space-between">
                 <StyledBadge badgeContent={BillingInvoice.length} color="success">
                   <Typography variant="body1">Billing</Typography>
@@ -1078,6 +1084,83 @@ const Home = () => {
                       }}
                     >
                       Pay
+                    </Box>
+                  </Paper>
+                ))}
+              </Box>
+            </Box> */}
+            <Box m={2}>
+              
+              <Box mt={2} fontWeight="bold" display="flex" justifyContent="space-between">
+                <StyledBadge  badgeContent={BillingInvoice.length} color="success" sx={{ ml: 1 }}>
+                  <Typography variant="body1">Billing</Typography>
+                </StyledBadge>
+                <Typography
+                  onClick={handleBilling} 
+                  color="#1976d3"
+                  sx={{ cursor: "pointer" }}
+                  variant="body1"
+                >
+                  See all {BillingInvoice.length}
+                </Typography>
+              </Box>
+
+              
+              <Box mt={3}>
+                {BillingInvoice.slice(0, 3).map((invoice) => (
+                  <Paper
+                    key={invoice._id}
+                    sx={{
+                      position: 'relative',
+                      '&:hover .PayText': {
+                        opacity: 1, 
+                      },
+                    }}
+                  >
+                    <Box
+                      onClick={() => handleEditInvoice(invoice._id)}
+                      sx={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        padding: '14px',
+                        border: '1px solid #ccc',
+                        borderRadius: '4px',
+                        mb: 2,
+                        position: 'relative',
+                        cursor: 'pointer',
+                        
+                      }}
+                    >
+                      
+                      <Box sx={{ color: 'rgb(50, 205, 50)', ml: 2 }}>
+                        <CreditCardIcon sx={{ fontSize: '30px' }} />
+                      </Box>
+
+                      
+                      <Box sx={{ marginLeft: 2 }}>
+                        <Typography fontWeight="bold">Pay invoice $1.00</Typography>
+                        <Typography color="#697991" fontSize={14}>
+                          #{invoice.invoicenumber || '000000'}
+                        </Typography>
+                      </Box>
+
+                      {/* Hover Text */}
+                      <Box
+                        className="PayText"
+                        sx={{
+                          position: 'absolute',
+                          top: '50%',
+                          left: '95%',
+                          transform: 'translate(-50%, -50%)',
+                          opacity: 0,
+                          transition: 'opacity 0.3s ease',
+                          cursor: 'pointer',
+                          fontSize: '15px',
+                          color: '#1976d3',
+                        }}
+                      >
+                        Pay
+                      </Box>
                     </Box>
                   </Paper>
                 ))}

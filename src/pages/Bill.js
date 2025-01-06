@@ -6,9 +6,11 @@ import Chip from '@mui/material/Chip';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const Bill = () => {
     const { _id } = useParams();
+    const navigate = useNavigate();
     const options = ['Individual', 'Business'];
     const [value, setValue] = React.useState(options[1]);
     const [inputValue, setInputValue] = React.useState('');
@@ -55,6 +57,9 @@ const INVOICE_API = process.env.REACT_APP_INVOICES_URL
         fetchData(_id);
     }, [_id]);
 
+    const handleCancel = () => {
+        navigate('/billing/invoices');
+    };
 
     return (
         <Container >
@@ -201,7 +206,7 @@ const INVOICE_API = process.env.REACT_APP_INVOICES_URL
                             <Typography>Pay Invoice</Typography>
                         </Button>
 
-                        <Button variant="outlined" color="primary">
+                        <Button onClick={handleCancel} variant="outlined" color="primary">
                             <Typography>Cancel</Typography>
                         </Button>
                     </Box>

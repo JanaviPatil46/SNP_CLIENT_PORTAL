@@ -1,5 +1,6 @@
 
-import { Box, LinearProgress, TextField, Typography, FormControlLabel, FormControl, RadioGroup, Radio,  Container, Button } from '@mui/material';
+import { RawOffRounded } from '@mui/icons-material';
+import { Box, LinearProgress, TextField, Typography, FormControlLabel, FormControl, RadioGroup, Radio, Container, Button } from '@mui/material';
 import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +8,7 @@ import { toast } from 'react-toastify';
 const OrganizerFormPage = () => {
     const { _id } = useParams();
     console.log(_id)
-   
+
     const [fileInputs, setFileInputs] = useState({});
     const findQuestionByText = (questionText) => {
         for (const section of organizerData.sections) {
@@ -19,11 +20,12 @@ const OrganizerFormPage = () => {
         }
         return null;
     };
-    
-    const navigate = useNavigate();
-const[organizerData,setOrganizerData]=useState()
 
-const ORGANIZER_API = process.en.REACT_APP_ORGANIZER_TEMP_URL;
+    const navigate = useNavigate();
+    const [organizerData, setOrganizerData] = useState()
+    const[issubmited,setissubmited]= useState(false)
+
+    const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
 
     const accountwiseorganizerBYId = async (_id) => {
         console.log(_id)
@@ -32,48 +34,54 @@ const ORGANIZER_API = process.en.REACT_APP_ORGANIZER_TEMP_URL;
             redirect: "follow",
         };
 
+
+
         try {
-            const response = await fetch(`${ORGANIZER_API }/workflow/orgaccwise/organizeraccountwise/${_id}`, requestOptions);
+            const response = await fetch(`${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/${_id}`, requestOptions);
             console.log(_id);
             if (!response.ok) {
 
                 throw new Error("Network response was not ok");
             }
 
-            const result = await response.json(); 
+            const result = await response.json();
             // Log the result in a structured way
             console.log("Fetched Data:", result.organizerAccountWise);
             console.log("Fetched Data:", result.organizerAccountWise._id);
-           
+
             setOrganizerData(result.organizerAccountWise)
-           
-           
-           
-           
+
+
+
+
 
         } catch (error) {
             console.error("Error fetching data:", error);
         }
     };
-    
-
-console.log(organizerData)
 
 
-    
+    console.log(organizerData)
 
 
-    const uppdateaccountwiseorganizerBYId = async () => {
+    const [issubmitted, setissubmitted] = useState(false); 
+
+    const handleClick = async  () => {
+        setissubmitted(true);
+        await uppdateaccountwiseorganizerBYId(true);
+    };
+
+    const uppdateaccountwiseorganizerBYId = async (issubmitted) => {
         console.log(_id);
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
-        
         const raw = JSON.stringify({
             jobid: ["661e495d11a097f731ccd6e8"],
             sections: organizerData?.sections?.map(section => ({
                 name: section?.text || '',
                 id: section?.id?.toString() || '',
                 text: section?.text || '',
+                issubmited: issubmitted,
                 formElements: section?.formElements?.map(question => ({
                     type: question?.type || '',
                     id: question?.id || '',
@@ -84,12 +92,14 @@ console.log(organizerData)
                         selected: option?.selected || false,
                     })) || [],
                     text: question?.text || '',
-                    textvalue: question?.textvalue || '', 
+                    textvalue: question?.textvalue || '',
                 })) || []
             })) || [],
+            
             active: true
+         
         });
-    
+
         const requestOptions = {
             method: "PATCH",
             body: raw,
@@ -97,34 +107,29 @@ console.log(organizerData)
                 "Content-Type": "application/json",
             },
         };
-        
-        console.log(raw); 
-        const url = `${ORGANIZER_API }/workflow/orgaccwise/organizeraccountwise/${_id}`;
-        console.log(url); 
+
+        console.log("test",raw);
+        const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/${_id}`;
+        console.log(url);
         fetch(url, requestOptions)
-        .then((response) => {
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-            return response.json();
-        })
-        .then((result) => {
-            toast.success("New organizer created successfully!");
-            navigate('/organizers');
-            console.log(result);
-        })
-        .catch((error) => {
-            console.error('Fetch error:', error);
-            toast.error(`Fetch error: ${error.message}`);
-        });
-    
-    
+            .then((response) => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
+            .then((result) => {
+                toast.success("New organizer created successfully!");
+                navigate('/organizers');
+                console.log(result);
+            })
+            .catch((error) => {
+                console.error('Fetch error:', error);
+                toast.error(`Fetch error: ${error.message}`);
+            });
+
+
     };
-    
-    
-    
-
-
     useEffect(() => {
         accountwiseorganizerBYId(_id);
     }, []);
@@ -175,27 +180,7 @@ console.log(organizerData)
             };
         });
     };
-    // const handleInputChange = (questionId, value) => {
-    //     setOrganizerTemp(prevOrganizerTemp => {
-    //         const updatedSections = prevOrganizerTemp.sections.map(section => ({
-    //             ...section,
-    //             formElements: section.formElements.map(question => {
-    //                 if (question.id === questionId) {
-    //                     return {
-    //                         ...question,
-    //                         textvalue: value
-    //                     };
-    //                 }
-    //                 return question;
-    //             })
-    //         }));
-    //         return {
-    //             ...prevOrganizerTemp,
-    //             sections: updatedSections
-    //         };
-    //     });
-    // };
-  
+
     const handleInputChange = (questionId, value) => {
         setOrganizerData(prevOrganizerTemp => {
             const updatedSections = prevOrganizerTemp.sections.map(section => ({
@@ -217,7 +202,7 @@ console.log(organizerData)
             };
         });
     };
-    
+
     const handleFileInputChange = (questionId, event) => {
         const files = event.target.files;
         setFileInputs(prevState => ({
@@ -253,7 +238,7 @@ console.log(organizerData)
                     <Box className="organizerform-details">
                         <form key={organizerData._id} id={organizerData._id} className="template-form">
                             <Box p={2}>
-                               
+
                                 <LinearProgress variant="determinate" value={(currentStep + 1) / organizerData.sections.length * 100} />
                             </Box>
 
@@ -356,7 +341,7 @@ console.log(organizerData)
                                 <Box>
                                     <Button disabled={currentStep === 0} onClick={handleBack}>Back</Button>
                                     {currentStep === organizerData.sections.length - 1 ? (
-                                        <Button onClick={uppdateaccountwiseorganizerBYId} >Submit</Button>
+                                        <Button onClick={handleClick} >Submit</Button>
                                     ) : (
                                         <Button onClick={handleNext}>Next</Button>
                                     )}
@@ -376,3 +361,59 @@ console.log(organizerData)
 };
 
 export default OrganizerFormPage;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// const uppdateaccountwiseorganizerBYId = async () => {
+    //     // Dynamically determine `issubmited` based on frontend conditions
+    //     const isFormComplete = organizerData?.sections?.every(
+    //         (section) =>
+    //             section.formElements?.every(
+    //                 (element) => element.textvalue || element.options?.some((opt) => opt.selected)
+    //             )
+    //     );
+    
+    //     const raw = JSON.stringify({
+    //         jobid: ["661e495d11a097f731ccd6e8"],
+    //         sections: organizerData?.sections,
+    //         active: true,
+    //         issubmited: isFormComplete, // Set dynamically based on conditions
+    //     });
+    // console.log(raw)
+    //     const requestOptions = {
+    //         method: "PATCH",
+    //         body: raw,
+    //         headers: {
+    //             "Content-Type": "application/json",
+    //         },
+    //     };
+    
+    //     const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/${_id}`;
+    //     try {
+    //         const response = await fetch(url, requestOptions);
+    //         if (!response.ok) {
+    //             throw new Error(`HTTP error! status: ${response.status}`);
+    //         }
+    //         const result = await response.json();
+    //         toast.success("Organizer updated successfully!");
+    //         // console.log(result);
+    //     } catch (error) {
+    //         console.error("Fetch error:", error);
+    //         toast.error(`Fetch error: ${error.message}`);
+    //     }
+    // };
+    
+    

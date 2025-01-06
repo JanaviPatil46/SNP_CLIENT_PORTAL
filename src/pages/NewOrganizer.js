@@ -1,39 +1,43 @@
-import React,{useContext} from 'react';
+import React, { useContext } from 'react';
 import { useState, useEffect } from 'react';
 import { Box, Typography, Divider, FormControl, InputLabel, Select, MenuItem, Container, Button } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
 import { LoginContext } from '../Contextprovider/Context';
+import { useNavigate } from 'react-router-dom';
+
+
+
 const NewOrganizer = () => {
+  const navigate = useNavigate();
   const [organizerTemplate, setOrganizerTemplate] = useState([]);
-  const [organizerTemp, setOrganizerTemp] = useState(null)
- 
-  const [selectedAccounts, setSelectedAccounts] = useState([]);
+
+
+
   const [showOrganizerForm, setShowOrganizerForm] = useState(false);
   const [organizeraccountwise, setorganizeraccountwise] = useState();
-  const [organizeraccountwiseid, setorganizeraccountwiseid] = useState();
 
-  const navigate = useNavigate();
+
+
   const LOGIN_API = process.env.REACT_APP_USER_LOGIN;
-  const ORGANIZER_API = process.en.REACT_APP_ORGANIZER_TEMP_URL;
-  const[accountId, setAccountId] = useState('')
+  const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
+  const [accountId, setAccountId] = useState('')
   const { logindata } = useContext(LoginContext);
   const fetchAccountId = async () => {
     const requestOptions = {
-      method: "GET",
-      redirect: "follow"
+        method: "GET",
+        redirect: "follow"
     };
-   
-    fetch(`${LOGIN_API }/admin/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
-      .then((response) => response.json()
-     
-    )
-      .then((result) => {
-        console.log(result)
-        setAccountId(result.accounts[0]._id)
-        console.log(result.accounts[0]._id)
-      })
-      .catch((error) => console.error(error));
-  };
+
+    fetch(`http://127.0.0.1:7000/accounts/accountdetails/accountdetailslist/listbyuserid/${logindata.user.id}`, requestOptions)
+        .then((response) => response.json()
+
+        )
+        .then((result) => {
+            console.log(result)
+            setAccountId(result.accounts[0]._id)
+            console.log(result.accounts[0]._id)
+        })
+        .catch((error) => console.error(error));
+};
 
   console.log(accountId)
 
@@ -49,7 +53,7 @@ const NewOrganizer = () => {
       const response = await fetch(url);
       const result = await response.json();
       setOrganizerTemplate(result.OrganizerTemplates);
-    
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -66,7 +70,7 @@ const NewOrganizer = () => {
     label: organizertemp.organizerName,
   }));
   const handleOrganizerFormClose = () => {
-    setTimeout(() => {}, 1000);
+    navigate('/organizers/active');
   };
 
   const [sections, setSections] = useState([]);
@@ -79,7 +83,7 @@ const NewOrganizer = () => {
       console.log(result.organizerTemplate.sections);
       setSelectedOrganizerTempData(result.organizerTemplate);
       setSections(result.organizerTemplate.sections);
-     
+
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -120,7 +124,7 @@ const NewOrganizer = () => {
                 conditions: question?.questionsectionsettings?.conditions || [],
                 descriptionEnabled: question?.questionsectionsettings?.descriptionEnabled || false,
                 description: question?.questionsectionsettings?.description || "",
-                mode: question?.questionsectionsettings?.mode || "Any"  
+                mode: question?.questionsectionsettings?.mode || "Any"
               }
             })) || [],
         })) || [],
@@ -135,8 +139,9 @@ const NewOrganizer = () => {
     };
 
     console.log(raw);
-    // const url = "http://127.0.0.1:7600/organizer-account-wise";
-  const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/org`;
+
+    const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/org`;
+
     fetch(url, requestOptions)
       .then((response) => response.json())
       .then((result) => {
@@ -144,7 +149,7 @@ const NewOrganizer = () => {
         console.log(result.newOrganizerAccountWise.accountid);
         const { _id } = result.newOrganizerAccountWise;
 
-        console.log(_id); // "66f7e5d97114d8ad832c2d3e"
+        console.log(_id);
         setorganizeraccountwise(result.newOrganizerAccountWise);
         setShowOrganizerForm(true);
         setSelectedOrganizerTemplate(selectedOrganizerTemplate);
@@ -158,18 +163,7 @@ const NewOrganizer = () => {
   useEffect(() => {
     fetchOrganizerTemplateData();
   }, []);
-  // const fetchOrganizerTemplateData = async (_id) => {
-  //   try {
-  //     const url = `http://127.0.0.1:7600/workflow/organizers/organizertemplate/${_id}`;
-  //     const response = await fetch(url);
-  //     const result = await response.json();
-  //     console.log(result)
-  //     console.log(result.organizerTemplate.sections)
-  //     // setOrganizerTemplate(result.OrganizerTemplates);
-  //   } catch (error) {
-  //     console.error("Error fetching data:", error);
-  //   }
-  // };
+
   return (
     <Container>
       <Box p={2}>
@@ -192,7 +186,7 @@ const NewOrganizer = () => {
           <Select
             value={selectedOrganizerTemplate}
             onChange={handleOrganizerTemplateChange}
-           
+
             label="Organizer Template"
           >
             {OrganizerTemplateOptions.map((option) => (

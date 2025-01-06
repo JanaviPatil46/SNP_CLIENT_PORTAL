@@ -12,7 +12,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 
-function ResetPassword() { 
+function UpdatePassword() { 
     const SEVER_PORT =process.env.REACT_APP_SERVER_URI
     const LOGIN_API = process.env.REACT_APP_USER_LOGIN;
     const history = useNavigate();
@@ -273,4 +273,4 @@ console.log(id)
     );
 }
 
-export default ResetPassword;
+export default UpdatePassword;

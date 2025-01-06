@@ -1,6 +1,6 @@
 
 
-
+@import url("../../src/App.css");
 .grid-container {
   margin: 0;
   padding: 0;
@@ -10,12 +10,17 @@
   grid-template-rows: 8% 1fr;
   grid-template-areas: "side main";
 }
-  
-  /* .header {
-    background-color:#EBF4F6;
+
+
+
+  .header {
+   
+    background-color: var(--color-header-bg);
     grid-area: nav;
-    box-shadow: 4px 0px 12px rgba(0, 0, 0, 0.3);
-  } */
+
+  border-bottom: 1px solid grey;
+    
+  }
 
 .sidebar {
   background-color: #084494;
@@ -26,7 +31,7 @@
   box-shadow: 4px 0px 12px rgba(0, 0, 0, 0.3);
 }
   .main {
-    /* padding: 20px; */
+    padding: 20px;
     grid-area: main;
     overflow-y: auto;
     height:100vh;
@@ -35,7 +40,16 @@
   .main::-webkit-scrollbar {
     display: none; 
   }
-  
+  .main::-webkit-scrollbar {
+    width: 8px; /* Set the width of the scrollbar */
+  }
+  .main::-webkit-scrollbar-thumb {
+    background-color: #888; /* Color of the scrollbar thumb */
+    border-radius: 10px; /* Rounded corners for the thumb */
+  }
+  .main::-webkit-scrollbar-thumb:hover {
+    background-color: #555; /* Darker color on hover */
+  }
   .toggle-button {
     position: absolute !important;
     top: 35px !important;
@@ -56,10 +70,7 @@
     background-color: #e0e0e0;
   }
   
-  /* ::-webkit-scrollbar {
-    display: none;
-  } */
-  
+ 
 
   .collapsed .menu-item .MuiListItemIcon-root {
     justify-content: center;
@@ -76,18 +87,7 @@
     display: none;
   }
   
-  /* .add-icon {
-    cursor: pointer;
-    color: green;
-    font-size: 1.8rem;
-  }
-  .custom-right-drawer {
-    border-top-left-radius: 15px;
-    border-bottom-left-radius: 15px;
-  
-  } */
-
-  /*  */
+ 
  
 .sidebar .MuiListItemText-root {
   color: white !important; 
