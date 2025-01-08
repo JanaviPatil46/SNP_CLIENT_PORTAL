@@ -27,13 +27,14 @@ const UpdateOrganizer = ({ OrganizerData, onClose = () => {} }) => {
     
   }, [OrganizerData]);
   const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
+
   const fetchOrganizerOfAccount = () => {
     const requestOptions = {
       method: "GET",
       redirect: "follow",
     };
     const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/${_id}`;
-
+   
     fetch(url, requestOptions)
       .then((response) => response.json())
 

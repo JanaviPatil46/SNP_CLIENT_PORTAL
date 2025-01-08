@@ -18,7 +18,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
 const Organizers = () => {
-   
+
     const StyledBadge = styled(Badge)(({ theme }) => ({
         '& .MuiBadge-badge': {
             right: -25,
@@ -76,7 +76,7 @@ const Organizers = () => {
                 throw new Error("Failed to fetch organizerTemplatesData");
             }
             const data = await response.json();
-            console.log(data);
+            console.log('fetchOrganizerTemplates:', data);
             setOrganizerTemplatesData(data.organizerAccountWise);
             console.log(data.organizerAccountWise[0]._id)
         } catch (error) {
@@ -131,9 +131,9 @@ const Organizers = () => {
     const handleEditOragnizer = (organizerId) => {
         console.log(organizerId)
         SetSelectedOrganizer(organizerId);
-        setPreviewDialogOpen(true);        
+        setPreviewDialogOpen(true);
     };
-    
+
     const [selectedOrganizer, SetSelectedOrganizer] = useState({});
     const [previewDialogOpen, setPreviewDialogOpen] = useState(false);
 
@@ -153,12 +153,12 @@ const Organizers = () => {
 
                 <Box>
                     <Box>
-                        <StyledBadge badgeContent={organizerTemplatesData.length} color="success">
+                        <StyledBadge badgeContent={organizerTemplatesData.filter((organizerAccountWise) => !organizerAccountWise.issubmited).length} color="success">
                             <Typography ml={2}>Waiting for action</Typography>
                         </StyledBadge>
                     </Box>
 
-                    <Box sx={{ padding: '40px', gap: '80px' }}>
+                    {/* <Box sx={{ padding: '40px', gap: '80px' }}>
                         {organizerTemplatesData.length > 0 ? (
                             <Slider {...settings}>
                                 {organizerTemplatesData.map((organizerAccountWise) => (
@@ -190,6 +190,43 @@ const Organizers = () => {
                                         </CardContent>
                                     </Card>
                                 ))}
+                            </Slider>
+                        ) : (
+                            <Typography>No organizers available.</Typography>
+                        )}
+                    </Box> */}
+                    <Box sx={{ padding: '40px', gap: '80px' }}>
+                        {organizerTemplatesData.length > 0 ? (
+                            <Slider {...settings}>
+                                {organizerTemplatesData
+                                    .filter((organizerAccountWise) => !organizerAccountWise.issubmited) // Filter for issubmited: false
+                                    .map((organizerAccountWise) => (
+                                        <Card
+                                            key={organizerAccountWise._id}
+                                            sx={{
+                                                height: '20vh',
+                                                border: '2px solid #EFF3F8',
+                                                cursor: 'pointer',
+                                                margin: '10px',
+                                                width: '18%',
+                                            }}
+                                            onClick={() => handleEditOragnizer(organizerAccountWise._id)}
+                                        >
+                                            <CardContent>
+                                                <Box display="flex" flexDirection="column">
+                                                    <Box sx={{ color: 'rgb(255, 142, 0)', ml: 2 }}>
+                                                        <EventNoteIcon />
+                                                    </Box>
+                                                    <Box sx={{ marginLeft: 2 }}>
+                                                        <Typography variant="h6">Complete Organizer</Typography>
+                                                        <Typography sx={{ color: '#697991' }}>
+                                                            {organizerAccountWise.organizertemplateid?.organizerName || 'Organizer Name'}
+                                                        </Typography>
+                                                    </Box>
+                                                </Box>
+                                            </CardContent>
+                                        </Card>
+                                    ))}
                             </Slider>
                         ) : (
                             <Typography>No organizers available.</Typography>

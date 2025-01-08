@@ -47,15 +47,15 @@ const Communication = () => {
 
   }, []);
 
-  const [selectedMessage, setSelectedMessage] = useState(null);
-  const [isEditing, setIsEditing] = useState(false);
-  const handleEditEditorChange = (newContent) => {
-    setDescription(newContent);
-  };
+  // const [selectedMessage, setSelectedMessage] = useState(null);
+  // const [isEditing, setIsEditing] = useState(false);
+  // const handleEditEditorChange = (newContent) => {
+  //   setDescription(newContent);
+  // };
 
   const [open, setOpen] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { data } = useParams();
+  // const { data } = useParams();
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -98,8 +98,8 @@ const Communication = () => {
 
   const CLEINT_CHAT_API = process.env.REACT_APP_CHAT_API
   //for accountwise 
-  const [accountData, setAccountData] = useState([]);
-  const [selectedAccount, setSelectedAccount] = useState([]);
+  // const [accountData, setAccountData] = useState([]);
+  // const [selectedAccount, setSelectedAccount] = useState([]);
 
   const [chatId, setChatId] = useState()
   ///for drawer save btn

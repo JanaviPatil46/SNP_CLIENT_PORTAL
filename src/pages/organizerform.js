@@ -28,7 +28,8 @@ const OrganizerFormPage = () => {
     const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
 
     const accountwiseorganizerBYId = async (_id) => {
-        console.log(_id)
+        console.log('iddd',_id)
+
         const requestOptions = {
             method: "Get",
             redirect: "follow",
@@ -71,7 +72,7 @@ const OrganizerFormPage = () => {
         await uppdateaccountwiseorganizerBYId(true);
     };
 
-    const uppdateaccountwiseorganizerBYId = async (issubmitted) => {
+    const uppdateaccountwiseorganizerBYId = async () => {
         console.log(_id);
         const myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json");
@@ -81,7 +82,7 @@ const OrganizerFormPage = () => {
                 name: section?.text || '',
                 id: section?.id?.toString() || '',
                 text: section?.text || '',
-                issubmited: issubmitted,
+         
                 formElements: section?.formElements?.map(question => ({
                     type: question?.type || '',
                     id: question?.id || '',
@@ -119,6 +120,7 @@ const OrganizerFormPage = () => {
                 return response.json();
             })
             .then((result) => {
+                statusupadate(_id)
                 toast.success("New organizer created successfully!");
                 navigate('/organizers');
                 console.log(result);
@@ -133,6 +135,18 @@ const OrganizerFormPage = () => {
     useEffect(() => {
         accountwiseorganizerBYId(_id);
     }, []);
+
+    const statusupadate=(id)=>{
+        const requestOptions = {
+            method: "PATCH",
+            redirect: "follow"
+          };
+          
+          fetch(`http://127.0.0.1:7600/workflow/orgaccwise/organizeraccountwise/organizeraccountwisestatus/${id}/true`, requestOptions)
+            .then((response) => response.text())
+            .then((result) => console.log(result))
+            .catch((error) => console.error(error));
+    }
 
     const shouldShowQuestion = (question) => {
         const { required, prefilled, conditional, conditions } = question.questionsectionsettings;

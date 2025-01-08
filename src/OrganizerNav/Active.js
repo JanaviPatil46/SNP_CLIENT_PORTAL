@@ -47,28 +47,61 @@ const Active = () => {
 
 
 
-   const [status,setStatus]= useState()
+
 
   const [organizerTemplatesData, setOrganizerTemplatesData] = useState([]);
-  
+  const [issubmitted,setIssubmitted]=useState();
   const fetchOrganizerTemplates = async (accountId) => {
     try {
       const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
-
+  
       const response = await fetch(url);
       if (!response.ok) {
         throw new Error("Failed to fetch organizerTemplatesData");
       }
+  
       const data = await response.json();
-      console.log(data);
-      setOrganizerTemplatesData(data.organizerAccountWise);
-      console.log(data.organizerAccountWise[0].organizertemplateid.organizerName)
-      console.log(data.organizerAccountWise[0].issealed)
-      console.log(data.organizerAccountWise[0]._id)
+      console.log("tempdata:", data);
+  
+      // Assuming you want to handle multiple organizerAccountWise items
+      if (data.organizerAccountWise && data.organizerAccountWise.length > 0) {
+        setOrganizerTemplatesData(data.organizerAccountWise);
+  
+        // Log all issubmited statuses
+        data.organizerAccountWise.forEach((organizer) => {
+          console.log("status:", organizer.issubmited);
+        });
+  
+        // Optionally, set issubmitted for the first organizer or aggregate
+        setIssubmitted('status',data.organizerAccountWise[0].issubmited);
+      } else {
+        console.warn("No organizerAccountWise data available");
+      }
     } catch (error) {
       console.error("Error fetching organizerTemplatesData:", error);
     }
   };
+  
+  // const fetchOrganizerTemplates = async (accountId) => {
+  //   try {
+  //     const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
+
+  //     const response = await fetch(url);
+  //     if (!response.ok) {
+  //       throw new Error("Failed to fetch organizerTemplatesData");
+  //     }
+  //     const data = await response.json();
+  //     console.log('tempdata',data);
+  //     setOrganizerTemplatesData(data.organizerAccountWise);
+  //     setIssubmitted(data.issubmited);
+  //     console.log("stetus:",data.issubmited)
+  //     // console.log(data.organizerAccountWise[0].organizertemplateid.organizerName)
+  //     // console.log(data.organizerAccountWise[0].issealed)
+  //     // console.log(data.organizerAccountWise[0]._id)
+  //   } catch (error) {
+  //     console.error("Error fetching organizerTemplatesData:", error);
+  //   }
+  // };
   useEffect(() => {
     fetchOrganizerTemplates(accountId);
   }, [accountId]);
@@ -284,9 +317,15 @@ const printOrganizerData = (id) => {
                 </TableCell>
                 <TableCell>{row.issealed ? <Chip label="Sealed" color="primary" /> : null}</TableCell>
                 <TableCell>
-            {/* Hardcoded "Completed" status */}
-            <Typography sx={{ fontWeight: "bold", color: "green" }}>Completed</Typography>
-          </TableCell>
+                  <Chip
+                    label={row.issubmited ? "Completed" : "Pending"}
+                    color={row.issubmited ? "success" : "default"}
+                    sx={{
+                      backgroundColor: row.issubmited ? "green" : "grey",
+                      color: "white",
+                    }}
+                  />
+                </TableCell>
 
           <TableCell>
             <PrintIcon onClick={() => printOrganizerData(row._id)} sx={{color:'#1976d3',cursor:'pointer'}}/>
