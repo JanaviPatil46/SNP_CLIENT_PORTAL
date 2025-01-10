@@ -66,11 +66,12 @@ const Organizers = () => {
 
 
     const [organizerTemplatesData, setOrganizerTemplatesData] = useState([]);
+    const [isActiveTrue, setIsActiveTrue] = useState(true);
 
     const fetchOrganizerTemplates = async (accountId) => {
         try {
-            const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
-
+            // const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
+            const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/accid/${accountId}/${isActiveTrue}`;
             const response = await fetch(url);
             if (!response.ok) {
                 throw new Error("Failed to fetch organizerTemplatesData");

@@ -693,10 +693,12 @@ const Home = () => {
   }, [logindata]);
 
   const [organizerTemplatesData, setOrganizerTemplatesData] = useState([]);
+
+ 
   const ORGANIZER_API = process.env.REACT_APP_ORGANIZER_TEMP_URL;
   const fetchOrganizerTemplates = async (accountId) => {
     try {
-      const url = `${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/${accountId}`;
+      const url =`${ORGANIZER_API}/workflow/orgaccwise/organizeraccountwise/organizerbyaccount/accid/${accountId}/${isActiveTrue}`;
       console.log(accountId)
       const response = await fetch(url);
       
